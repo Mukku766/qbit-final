@@ -1,0 +1,67 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'poppins',sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image: url('/2927263-01.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+  }
+  
+  .css-9ugsz7 {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+  .css-1l8j5k8 {
+    background-color: #021529 !important; 
+  }
+
+
+  .css-19cz0wk .css-12i7wg6-MuiPaper-root-MuiDrawer-paper {
+    background-color: #021529 !important; 
+}
+
+
+@media screen and (min-width: 1024px) {
+   
+
+
+  ::-webkit-scrollbar {
+      width: 20px;
+    }
+  
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #858BC5;
+      border-radius: 20px;
+      border: 6px solid transparent;
+      background-clip: content-box;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #032142;
+    }
+  
+  }
