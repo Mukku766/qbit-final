@@ -92,7 +92,7 @@ const LoginComponent = () => {
         isFormValid: false,
       });
 
-      navigate("/Home");
+      navigate("/all-logs");
     } catch (error) {
       setError("An error occurred during login. Please try again.");
       alert("Email and Password not Matched");

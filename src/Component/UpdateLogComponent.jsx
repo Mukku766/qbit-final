@@ -169,11 +169,9 @@ function UpdateLogsComponent() {
 
   return (
     <Container>
+      <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
       <Box
         p={3}
-        mt={15}
-        ml={2}
-        mr={2}
         boxShadow={6}
         borderRadius={4}
         style={{ backdropFilter: "blur(12px)" }}
@@ -300,25 +298,25 @@ function UpdateLogsComponent() {
         </Button>
       </Box>
       <Box
-        p={3}
-        mt={10}
-        ml={2}
-        mr={2}
-        boxShadow={6}
-        borderRadius={4}
-        style={{ backdropFilter: "blur(12px)" }}
-      > 
-        <TableContainer component={Box}  >
-          <Table sx={{ minWidth: 650 }} aria-label="simple table"  >
+  p={3}
+  mt={6}
+
+  boxShadow={6}
+  borderRadius={4}
+  style={{ backdropFilter: "blur(12px)" }}
+  sx={{ minWidth: { md: "100%"} }}
+>
+        <TableContainer sx={{overflow:"auto !important"}} component={Box} >
+          <Table aria-label="simple table" style={{overflowX:"auto !important"}} >
             <TableHead>
               <TableRow>
-                <TableCell style={{ color: "#858BC5" }}>Log Date</TableCell>
+                <TableCell style={{ color: "#858BC5" }}>Date</TableCell>
                 <TableCell style={{ color: "#858BC5" }}>Hours</TableCell>
                 <TableCell style={{ color: "#858BC5" }}>Minutes</TableCell>
-                <TableCell style={{ color: "#858BC5" }}>Log Type</TableCell>
-                <TableCell style={{ color: "#858BC5" }}>Project Name</TableCell>
+                <TableCell style={{ color: "#858BC5" }}>Type</TableCell>
+                <TableCell style={{ color: "#858BC5" }}>Project</TableCell>
                 <TableCell style={{ color: "#858BC5" }}>
-                  Log Description
+                  Description
                 </TableCell>
                 <TableCell style={{ color: "#858BC5" }}>Action</TableCell>
               </TableRow>
@@ -370,6 +368,7 @@ function UpdateLogsComponent() {
         >
           Submit Logs
         </Button>
+      </Box>
       </Box>
     </Container>
   );

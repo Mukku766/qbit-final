@@ -51,7 +51,8 @@ body {
     }
   
     ::-webkit-scrollbar-track {
-      background-color: transparent;
+      background-color: #021529;
+      
     }
 
     ::-webkit-scrollbar-thumb {
@@ -64,4 +65,9 @@ body {
       background-color: #032142;
     }
   
+  }
+
+
+  MuiBox-root css-1tuy4cu{
+    overflow: hidden;
   }

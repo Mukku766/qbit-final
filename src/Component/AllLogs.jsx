@@ -1,77 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
-import TableBody from '@mui/material/TableBody';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import { MenuItem, Typography, TextField, Button, Box, Grid } from '@mui/material'; // Import MenuItem here
-import Cookies from 'js-cookie';
-import { Navigate, useNavigate } from 'react-router-dom';
-
+import React, { useEffect, useState } from "react";
+import TableContainer from "@mui/material/TableContainer";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import {
+  MenuItem,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Grid,
+} from "@mui/material";
+import Cookies from "js-cookie";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function AllLogs({ logs }) {
-
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const [filter, setFilter] = useState({
-    year: '',
-    month: '',
-    week: '',
-    date: '',
+    year: "",
+    month: "",
+    week: "",
+    date: "",
   });
 
   const years = [new Date().getFullYear()];
 
-    const months = [
-    'January', 'February', 'March', 'April', 'May', 'June', 
-    'July', 'August', 'September', 'October', 'November', 'December'
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
-  // Function to get weeks of a month
   const getWeeksOfMonth = (year, month) => {
-    const firstDay = new Date(year, month, 1).getDay(); // Day of the week of the 1st day
-    const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in the month
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
     const daysAfterFirstWeek = daysInMonth - (7 - firstDay);
-    const weeks = Math.ceil(daysAfterFirstWeek / 7) + 1; // Add one for the first week
+    const weeks = Math.ceil(daysAfterFirstWeek / 7) + 1;
     return Array.from({ length: weeks }, (_, index) => index + 1);
   };
 
   const handleFilterChange = (event) => {
     const { name, value } = event.target;
     const updatedFilter = { ...filter, [name]: value };
-    // Enable submit button if year is selected or date is filled
-    const isSubmitEnabled = updatedFilter.year !== '' || updatedFilter.date !== '';
-    // Update state
     setFilter(updatedFilter);
-    setSubmitEnabled(isSubmitEnabled);
+    setSubmitEnabled(updatedFilter.year !== "" || updatedFilter.date !== "");
+    const isClearEnabled = Object.values(updatedFilter).some(value => value !== '');
+    setClearEnabled(isClearEnabled);
   };
-  
 
-  const filteredLogs = logs ? logs.filter((log) => {
-    if (filter.year && log.year !== filter.year) return false;
-    if (filter.month && log.month !== filter.month) return false;
-    if (filter.week && log.week !== filter.week) return false;
-    if (filter.date && log.date !== filter.date) return false;
-    return true;
-  }) : [];
+  const clearFilters = () => {
+    setFilter({
+      year: "",
+      month: "",
+      week: "",
+      date: "",
+    });
+    setSubmitEnabled(false);
+    setClearEnabled(false);
+  };
 
+  const filteredLogs = logs
+    ? logs.filter((log) => {
+        if (filter.year && log.year !== filter.year) return false;
+        if (filter.month && log.month !== filter.month) return false;
+        if (filter.week && log.week !== filter.week) return false;
+        if (filter.date && log.date !== filter.date) return false;
+        return true;
+      })
+    : [];
 
   const [submitEnabled, setSubmitEnabled] = useState(false);
+  const [clearEnabled, setClearEnabled] = useState(false);
 
   const weeks = getWeeksOfMonth(filter.year, months.indexOf(filter.month));
-const token = Cookies.get('token')
-  useEffect(()=>{
-    if(!token){
-      navigate('/')
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
     }
-  },[])
+  }, []);
+
   return (
     <div>
-      <Box p={3} mt={15} ml={2} mr={2} boxShadow={6} borderRadius={4} style={{ backdropFilter: 'blur(12px)', color: '#ffffff' }}>
+      <Box
+        p={3}
+        boxShadow={6}
+        borderRadius={4}
+        style={{ backdropFilter: "blur(12px)", color: "#ffffff" }}
+      >
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={6}  md={3}>
-            <Typography color={'#fff'} sx={{ my: 1 }}>
+          {/* Year */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography color={"#fff"} sx={{ my: 1 }}>
               Select Year
             </Typography>
             <TextField
@@ -81,7 +114,6 @@ const token = Cookies.get('token')
               value={filter.year}
               onChange={handleFilterChange}
               variant="standard"
-              
             >
               {years.map((year) => (
                 <MenuItem key={year} value={year}>
@@ -90,8 +122,9 @@ const token = Cookies.get('token')
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={6}  md={3}>
-            <Typography color={'#fff'} sx={{ my: 1 }}>
+          {/* Month */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography color={"#fff"} sx={{ my: 1 }}>
               Select Month
             </Typography>
             <TextField
@@ -101,7 +134,6 @@ const token = Cookies.get('token')
               value={filter.month}
               onChange={handleFilterChange}
               variant="standard"
-             
             >
               {months.map((month) => (
                 <MenuItem key={month} value={month}>
@@ -110,8 +142,9 @@ const token = Cookies.get('token')
               ))}
             </TextField>
           </Grid>
+          {/* Week */}
           <Grid item sm={6} xs={12} md={3}>
-            <Typography color={'#fff'} sx={{ my: 1 }}>
+            <Typography color={"#fff"} sx={{ my: 1 }}>
               Select Week
             </Typography>
             <TextField
@@ -121,7 +154,6 @@ const token = Cookies.get('token')
               value={filter.week}
               onChange={handleFilterChange}
               variant="standard"
-             
             >
               {weeks.map((week) => (
                 <MenuItem key={week} value={week}>
@@ -130,8 +162,9 @@ const token = Cookies.get('token')
               ))}
             </TextField>
           </Grid>
+          {/* Date */}
           <Grid item sm={6} xs={12} md={3}>
-            <Typography color={'#fff'} sx={{ my: 1 }}>
+            <Typography color={"#fff"} sx={{ my: 1 }}>
               Select Date
             </Typography>
             <TextField
@@ -146,20 +179,51 @@ const token = Cookies.get('token')
               }}
             />
           </Grid>
-          <Grid item xs={12}>
-          <Button
-  variant="contained"
-  color="primary"
-  sx={{ borderRadius: '50px', bgcolor: '#858BC5', color: '#ffffff' }}
-  disabled={!submitEnabled}
->
-  Submit
-</Button>
-
+          {/* Submit Button */}
+          <Grid item xs={6} md={3}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                borderRadius: "50px",
+                bgcolor: "#858BC5",
+                color: "#ffffff",
+                marginRight: "8px",
+                width: "100%",
+              }}
+              disabled={!submitEnabled}
+            >
+              Submit
+            </Button></Grid>
+            <Grid item xs={6} md={3}>
+              {/* Clear Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  borderRadius: "50px",
+                  bgcolor: "#858BC5",
+                  color: "#ffffff",
+                
+                  width: "100%",
+                }}
+                onClick={clearFilters}
+                disabled={!clearEnabled}                
+              >
+                Clear
+              </Button>
+            
           </Grid>
         </Grid>
       </Box>
-      <Box p={3} mt={6} ml={2} mr={2} boxShadow={6} borderRadius={4} style={{ backdropFilter: 'blur(12px)', color: '#000000' }}>
+      {/* Table */}
+      <Box
+        p={3}
+        mt={6}
+        boxShadow={6}
+        borderRadius={4}
+        style={{ backdropFilter: "blur(12px)", color: "#000000" }}
+      >
         <TableContainer>
           <Table>
             <TableHead>{/* Table header */}</TableHead>
@@ -170,7 +234,9 @@ const token = Cookies.get('token')
                 ))
               ) : (
                 <TableRow>
-                  <TableCell sx={{color:"white"}} colSpan={7}>No logs found</TableCell>
+                  <TableCell sx={{ color: "white" }} colSpan={7}>
+                    No logs found
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

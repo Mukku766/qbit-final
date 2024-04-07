@@ -71,9 +71,9 @@ const UpdatePassword = () => {
 
   return (
     <Container>
-      <Box p={3} mt={15} ml={2} mr={2}
+      <Box 
         sx={{
-          maxWidth: "400px",
+          maxWidth: "500px",
           backgroundColor: "transparent",
           borderRadius: "20px",
           backdropFilter: "blur(12px)",

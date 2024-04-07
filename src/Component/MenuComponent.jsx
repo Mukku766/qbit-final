@@ -3,18 +3,13 @@ import logo from "./logo1.png";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import UpdateIcon from "@mui/icons-material/Update";
@@ -23,14 +18,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 import AllLog from "./AllLogs";
 import UpdateLogsComponent from "./UpdateLogComponent";
 import UpdatePassword from "./UpdatePassword";
 import Profile from "./Profile";
-
-import { Cookie } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+
 const drawerWidth = 250;
 
 function PageAllLogs() {
@@ -72,7 +67,7 @@ function MenuComponent(props) {
   const [selectedItem, setSelectedItem] = React.useState("All Logs");
 
   const nav = useNavigate();
-
+  const container = window !== undefined ? () => window().document.body : undefined;
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
@@ -93,8 +88,10 @@ function MenuComponent(props) {
     handleDrawerClose();
   };
 
-  const logoutHandler = ()=>{ Cookies.remove('token');  
-  nav('/');}
+  const logoutHandler = () => {
+    Cookies.remove('token');
+    nav('/');
+  };
 
   const drawer = (
     <div>
@@ -112,51 +109,50 @@ function MenuComponent(props) {
         }}
       >
         {[
-          "All Logs",
-          "Add Logs",
-          "Update Password",
-          "Profile",
-          // "Log out",
-        ].map((text, index) => (
+          { text: "All Logs", route: "/all-logs" },
+          { text: "Add Logs", route: "/add-logs" },
+          { text: "Update Password", route: "/update-password" },
+          { text: "Profile", route: "/profile" },
+        ].map((item, index) => (
           <ListItem
-            key={text}
+            key={item.text}
             disablePadding
             sx={{ width: "220px" }}
-            onClick={() => handleMenuItemClick(text)}
+            onClick={() => handleMenuItemClick(item.text)}
           >
             <ListItemButton
               sx={{
                 "&:hover": { backgroundColor: "#858BC5", borderRadius: "300px" },
               }}
+              component={Link}
+              to={item.route}
             >
               <ListItemIcon>
                 {index === 0 && <ListAltIcon sx={{ color: "white" }} />}
                 {index === 1 && <UpdateIcon sx={{ color: "white" }} />}
                 {index === 2 && <VpnKeyIcon sx={{ color: "white" }} />}
                 {index === 3 && <AccountCircleIcon sx={{ color: "white" }} />}
-                {/* {index === 4 && <ExitToAppIcon sx={{ color: "white" }} />} */}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
         ))}
-         <ListItem
-           
-            disablePadding
-            sx={{ width: "220px" }}
-            onClick={logoutHandler}
+        <ListItem
+          disablePadding
+          sx={{ width: "220px" }}
+          onClick={logoutHandler}
+        >
+          <ListItemButton
+            sx={{
+              "&:hover": { backgroundColor: "#858BC5", borderRadius: "300px" },
+            }}
           >
-            <ListItemButton
-              sx={{
-                "&:hover": { backgroundColor: "#858BC5", borderRadius: "300px" },
-              }}
-            >
-              <ListItemIcon>
-               <ExitToAppIcon sx={{ color: "white" }} />
-              </ListItemIcon>
-              <ListItemText primary={'Log Out'} />
-            </ListItemButton>
-          </ListItem>
+            <ListItemIcon>
+              <ExitToAppIcon sx={{ color: "white" }} />
+            </ListItemIcon>
+            <ListItemText primary={'Log Out'} />
+          </ListItemButton>
+        </ListItem>
       </List>
     </div>
   );
@@ -171,8 +167,6 @@ function MenuComponent(props) {
         return <PageUpdatePassword />;
       case "Profile":
         return <PageProfile />;
-        case "Log out":
-         
       default:
         return null;
     }
@@ -180,7 +174,6 @@ function MenuComponent(props) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
@@ -212,10 +205,10 @@ function MenuComponent(props) {
         sx={{
           width: { sm: drawerWidth },
           flexShrink: { sm: 0 },
-         
           ".css-12i7wg6-MuiPaper-root-MuiDrawer-paper": {
             backgroundColor: "#021529",
           },
+          
         }}
         aria-label="mailbox folders"
       >
@@ -224,7 +217,6 @@ function MenuComponent(props) {
           open={mobileOpen}
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
-          
           ModalProps={{
             keepMounted: true,
           }}
@@ -253,15 +245,30 @@ function MenuComponent(props) {
           {drawer}
         </Drawer>
       </Box>
-     
+      <Box
+        component='main'
+        sx={{
+          border: "10px solid red",
+          flexGrow: 1,
+          background: 'transparent',
+          overflowY: 'auto', 
+          '&::-webkit-scrollbar': {
+            width: '0', 
+          },
+          scrollbarWidth: 'none',
+          marginTop: 10, 
+          padding:1
+        }}
+      >
         {renderPage()}
-      
+      </Box>
     </Box>
   );
 }
 
 MenuComponent.propTypes = {
   window: PropTypes.func,
+  children: PropTypes.node,
 };
 
 export default MenuComponent;

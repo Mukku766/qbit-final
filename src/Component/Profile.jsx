@@ -64,9 +64,6 @@ const ProfilePage = () => {
     <Container>
       <Box
         p={3}
-        mt={15}
-        ml={2}
-        mr={2}
         boxShadow={6}
         borderRadius={4}
         style={{ backdropFilter: "blur(12px)", color: "#ffffff" }}
