@@ -38,9 +38,9 @@ const LogTable = ({ logs, handleDeleteLog, handleEditLog }) => {
               <TableCell sx={{ color: "#fff", textAlign: "center"  }}>
                 {log.logDescription}
               </TableCell>
-              <TableCell>
+              <TableCell sx={{textAlign: "center"}}>
                 <IconButton
-                  sx={{ color: "white" }}
+                  sx={{ color: "white",}}
                   onClick={() => handleDeleteLog(index)}
                   onMouseOver={(e) => (e.currentTarget.style.color = "red")}
                   onMouseOut={(e) => (e.currentTarget.style.color = "white")}
@@ -48,7 +48,7 @@ const LogTable = ({ logs, handleDeleteLog, handleEditLog }) => {
                   <DeleteIcon />
                 </IconButton>
                 <IconButton
-                  sx={{ color: "white" }}
+                  sx={{ color: "white", marginLeft: "15px" }}
                   onClick={() => handleEditLog(index)}
                   onMouseOver={(e) => (e.currentTarget.style.color = "green")}
                   onMouseOut={(e) => (e.currentTarget.style.color = "white")}

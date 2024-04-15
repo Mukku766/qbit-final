@@ -43,9 +43,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1.5rem 1.5rem;
+    padding: 2rem 2rem;
     margin: 0.5rem;
-    max-width: 370px;
+    max-width: 390px;
   }
 
   .Inner-Box-Layout {
@@ -53,7 +53,7 @@ body {
     outline: 1px solid #858BC5;
     border-radius: 20px;
     backdrop-filter: blur(10px);
-    padding: 1.6rem 1.9rem;
+    padding: 2rem 2rem;
    
     
   }
@@ -106,5 +106,10 @@ body {
   }
 
 
+  .MuiInputBase-input {
+    color: #ffffff !important;
+  }
 
-
+  .Input-Label{
+    color: #8e97e5 !important;
+  }

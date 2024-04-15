@@ -100,10 +100,10 @@ function AllLogs({ logs }) {
       <Box
        className="Inner-Box-Layout"
       >
-        <Grid container spacing={4}>
+        <Grid container spacing={8}>
           {/* Year */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Year
             </Typography>
             <TextField
@@ -122,8 +122,8 @@ function AllLogs({ logs }) {
             </TextField>
           </Grid>
           {/* Month */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+          <Grid item xs={12} sm={6} md={6}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Month
             </Typography>
             <TextField
@@ -142,8 +142,8 @@ function AllLogs({ logs }) {
             </TextField>
           </Grid>
           {/* Week */}
-          <Grid item sm={6} xs={12} md={3}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+          <Grid item sm={6} xs={12} md={6}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Week
             </Typography>
             <TextField
@@ -162,8 +162,8 @@ function AllLogs({ logs }) {
             </TextField>
           </Grid>
           {/* Date */}
-          <Grid item sm={6} xs={12} md={3}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+          <Grid item sm={6} xs={12} md={6}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Date
             </Typography>
             <TextField

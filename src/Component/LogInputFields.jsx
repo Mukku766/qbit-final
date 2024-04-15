@@ -49,9 +49,9 @@ const LogInputFields = ({
   handleLogDescriptionChange,
 }) => {
   return (
-    <Grid container spacing={4}>
+    <Grid container spacing={8}>
       <Grid item xs={12} sm={12} md={4}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Log Date
         </Typography>
         <TextField
@@ -68,7 +68,7 @@ const LogInputFields = ({
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Hours
         </Typography>
         <TextField
@@ -87,7 +87,7 @@ const LogInputFields = ({
         </TextField>
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Minutes
         </Typography>
         <TextField
@@ -106,7 +106,7 @@ const LogInputFields = ({
         </TextField>
       </Grid>
       <Grid item xs={12} sm={6} md={6}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Log Type
         </Typography>
         <TextField
@@ -125,7 +125,7 @@ const LogInputFields = ({
         </TextField>
       </Grid>
       <Grid item xs={12} sm={6} md={6}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Project
         </Typography>
         <TextField
@@ -144,7 +144,7 @@ const LogInputFields = ({
         </TextField>
       </Grid>
       <Grid item xs={12}>
-        <Typography color={"#fff"} sx={{ my: 1 }}>
+        <Typography className="Input-Label" sx={{ my: 1 }}>
           Log Description
         </Typography>
         <TextField

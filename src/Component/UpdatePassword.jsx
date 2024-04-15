@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Button,
   FormControl,
-  Container,
   Typography,
   Box,
   TextField,
   InputAdornment,
   IconButton,
+  Grid,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
@@ -18,10 +17,8 @@ const UpdatePassword = () => {
     NewPassword: "",
     ConfirmPassword: "",
   });
-
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [isFormFilled, setIsFormFilled] = useState(false);
-
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -37,13 +34,13 @@ const UpdatePassword = () => {
   const handleTogglePasswordVisibility = (passwordType) => {
     switch (passwordType) {
       case "CurrentPassword":
-        setShowCurrentPassword((prevShowCurrentPassword) => !prevShowCurrentPassword);
+        setShowCurrentPassword((prevShow) => !prevShow);
         break;
       case "NewPassword":
-        setShowNewPassword((prevShowNewPassword) => !prevShowNewPassword);
+        setShowNewPassword((prevShow) => !prevShow);
         break;
       case "ConfirmPassword":
-        setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
+        setShowConfirmPassword((prevShow) => !prevShow);
         break;
       default:
         break;
@@ -52,34 +49,33 @@ const UpdatePassword = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Add logic to update password (communicate with backend)
     console.log("Updating password...");
     console.log(inputs);
   };
 
   useEffect(() => {
-    // Check if all fields are filled
     setIsFormFilled(
       inputs.CurrentPassword !== "" &&
-      inputs.NewPassword !== "" &&
-      inputs.ConfirmPassword !== ""
+        inputs.NewPassword !== "" &&
+        inputs.ConfirmPassword !== ""
     );
-  
-    // Check if passwords match
     setIsPasswordMatch(inputs.NewPassword === inputs.ConfirmPassword);
   }, [inputs]);
 
+
+
+
+
+
+
   return (
-    <>
-      <Box 
-       className="Inner-Box-Layout"
-      >
-        <section>
-          <form onSubmit={handleSubmit}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
-              Current Password
-            </Typography>
-            <FormControl sx={{ width: "100%", marginBottom: "30px" }}>
+    <Box className="Inner-Box-Layout" maxWidth={700}>
+      
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Typography color="#fff" sx={{ my: 1 }}>Current Password</Typography>
+            <FormControl fullWidth>
               <TextField
                 type={showCurrentPassword ? "text" : "password"}
                 name="CurrentPassword"
@@ -94,9 +90,13 @@ const UpdatePassword = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => handleTogglePasswordVisibility("CurrentPassword")}
+                        onClick={() =>
+                          handleTogglePasswordVisibility("CurrentPassword")
+                        }
                         edge="end"
-                        aria-label={showCurrentPassword ? "hide password" : "show password"}
+                        aria-label={
+                          showCurrentPassword ? "hide password" : "show password"
+                        }
                       >
                         {showCurrentPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
@@ -105,11 +105,10 @@ const UpdatePassword = () => {
                 }}
               />
             </FormControl>
-
-            <Typography color={"#fff"} sx={{ my: 1 }}>
-              New Password
-            </Typography>
-            <FormControl sx={{ width: "100%", marginBottom: "30px" }}>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography color="#fff" sx={{ my: 1 }}>New Password</Typography>
+            <FormControl fullWidth>
               <TextField
                 type={showNewPassword ? "text" : "password"}
                 name="NewPassword"
@@ -126,7 +125,9 @@ const UpdatePassword = () => {
                       <IconButton
                         onClick={() => handleTogglePasswordVisibility("NewPassword")}
                         edge="end"
-                        aria-label={showNewPassword ? "hide password" : "show password"}
+                        aria-label={
+                          showNewPassword ? "hide password" : "show password"
+                        }
                       >
                         {showNewPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
@@ -135,11 +136,10 @@ const UpdatePassword = () => {
                 }}
               />
             </FormControl>
-
-            <Typography color={"#fff"} sx={{ my: 1 }}>
-              Confirm Password
-            </Typography>
-            <FormControl sx={{ width: "100%", marginBottom: "30px" }}>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography color="#fff" sx={{ my: 1 }}>Confirm Password</Typography>
+            <FormControl fullWidth>
               <TextField
                 type={showConfirmPassword ? "text" : "password"}
                 name="ConfirmPassword"
@@ -154,9 +154,13 @@ const UpdatePassword = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => handleTogglePasswordVisibility("ConfirmPassword")}
+                        onClick={() =>
+                          handleTogglePasswordVisibility("ConfirmPassword")
+                        }
                         edge="end"
-                        aria-label={showConfirmPassword ? "hide password" : "show password"}
+                        aria-label={
+                          showConfirmPassword ? "hide password" : "show password"
+                        }
                       >
                         {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
@@ -170,27 +174,30 @@ const UpdatePassword = () => {
                 </Typography>
               )}
             </FormControl>
+          </Grid>
 
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                width: "100%",
-                height: "40px",
-                borderRadius: "30px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                transition: "background-color 0.4s ease",
-                backgroundColor: isPasswordMatch ? "#858BC5" : "grey",
-              }}
-              disabled={!isFormFilled || !isPasswordMatch}
-            >
-              Confirm
-            </Button>
-          </form>
-        </section>
-      </Box>
-    </>
+          <Grid item xs={12} sm={6} md={3}>
+          <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            width: "100%",
+            height: "40px",
+            borderRadius: "30px",
+            
+            fontSize: "1rem",
+            fontWeight: "600",
+            backgroundColor: isPasswordMatch ? "#858BC5" : "grey",
+          }}
+          disabled={!isFormFilled || !isPasswordMatch}
+        >
+          Confirm
+        </Button>
+</Grid>
+        </Grid>
+        
+      </form>
+    </Box>
   );
 };
 

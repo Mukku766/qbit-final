@@ -55,17 +55,17 @@ const ProfilePage = () => {
       <Box
        className="Inner-Box-Layout"
       >
-        <Typography variant="h5" color={"#fff"} sx={{ marginBottom: "2px" }}>
+        <Typography variant="h5" className="Input-Label" sx={{ marginBottom: "3px" }}>
           Personal Information
         </Typography>
         <Typography
           variant="subtitle1"
-          color={"#fff"}
-          sx={{ marginBottom: "20px", fontSize: "0.8rem" }}
+          className="Input-Label"
+          sx={{ marginBottom: "10px", fontSize: "0.8rem" }}
         >
           Details about your personal information
         </Typography>
-        <Grid container spacing={4}>
+        <Grid container spacing={8}>
           <Grid
             item
             xs={12}
@@ -83,8 +83,8 @@ const ProfilePage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "170px",
-                height: "170px",
+                width: "300px",
+                height: "300px",
                 borderRadius: "50%",
                 overflow: "hidden",
               }}
@@ -129,23 +129,25 @@ const ProfilePage = () => {
             </label>
           </Grid>
           <Grid item xs={12} sm={12} md={6}>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Full Name
             </Typography>
-            <FormControl fullWidth sx={{ marginBottom: "20px" }}>
+            <FormControl fullWidth sx={{ my: "30px" }}>
               <TextField
                 type="text"
+               
                 name="fullName"
                 variant="standard"
                 autoComplete="off"
                 value={fullName}
                 onChange={handleFullNameChange}
+                
               />
             </FormControl>
-            <Typography color={"#fff"} sx={{ my: 1 }}>
+            <Typography className="Input-Label" sx={{ my: 1 }}>
               Email
             </Typography>
-            <FormControl fullWidth sx={{ marginBottom: "20px" }}>
+            <FormControl fullWidth sx={{ my: "30px"}}>
               <TextField
                 type="email"
                 name="email"
@@ -162,10 +164,12 @@ const ProfilePage = () => {
               )}
             </FormControl>
             <Button
+            
               variant="contained"
               onClick={saveProfile}
               disabled={!isFormFilled || !isEmailValid}
               sx={{
+                marginTop: 5.8,
                 width: "100%",
                 height: "40px",
                 borderRadius: "40px",
