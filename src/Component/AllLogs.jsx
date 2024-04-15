@@ -56,7 +56,9 @@ function AllLogs({ logs }) {
     const updatedFilter = { ...filter, [name]: value };
     setFilter(updatedFilter);
     setSubmitEnabled(updatedFilter.year !== "" || updatedFilter.date !== "");
-    const isClearEnabled = Object.values(updatedFilter).some(value => value !== '');
+    const isClearEnabled = Object.values(updatedFilter).some(
+      (value) => value !== ""
+    );
     setClearEnabled(isClearEnabled);
   };
 
@@ -96,10 +98,7 @@ function AllLogs({ logs }) {
   return (
     <div>
       <Box
-        p={3}
-        boxShadow={6}
-        borderRadius={4}
-        style={{ backdropFilter: "blur(12px)", color: "#ffffff" }}
+       className="Inner-Box-Layout"
       >
         <Grid container spacing={4}>
           {/* Year */}
@@ -194,43 +193,39 @@ function AllLogs({ logs }) {
               disabled={!submitEnabled}
             >
               Submit
-            </Button></Grid>
-            <Grid item xs={6} md={3}>
-              {/* Clear Button */}
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                  borderRadius: "50px",
-                  bgcolor: "#858BC5",
-                  color: "#ffffff",
-                
-                  width: "100%",
-                }}
-                onClick={clearFilters}
-                disabled={!clearEnabled}                
-              >
-                Clear
-              </Button>
-            
+            </Button>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            {/* Clear Button */}
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                borderRadius: "50px",
+                bgcolor: "#858BC5",
+                color: "#ffffff",
+
+                width: "100%",
+              }}
+              onClick={clearFilters}
+              disabled={!clearEnabled}
+            >
+              Clear
+            </Button>
           </Grid>
         </Grid>
       </Box>
       {/* Table */}
       <Box
-        p={3}
-        mt={6}
-        boxShadow={6}
-        borderRadius={4}
-        style={{ backdropFilter: "blur(12px)", color: "#000000" }}
+       className="Inner-Box-Layout" mt={6}
       >
         <TableContainer>
           <Table>
-            <TableHead>{/* Table header */}</TableHead>
+            <TableHead></TableHead>
             <TableBody>
               {filteredLogs.length > 0 ? (
                 filteredLogs.map((log, index) => (
-                  <TableRow key={index}>{/* Table cells */}</TableRow>
+                  <TableRow key={index}></TableRow>
                 ))
               ) : (
                 <TableRow>
@@ -242,6 +237,8 @@ function AllLogs({ logs }) {
             </TableBody>
           </Table>
         </TableContainer>
+
+
       </Box>
     </div>
   );

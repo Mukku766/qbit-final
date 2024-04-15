@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import logo from "./logo1.png";
+import logo from "../assets/logo1.png";
 import {
   Button,
   Input,
   FormControl,
   InputLabel,
-  Link,
-  Container,
   Typography,
   Box,
 } from "@mui/material";
 
-const ChangePasswordComponent = () => {
+const ChangePassword = () => {
   const [inputs, setInputs] = useState({
-    NewPassword: "",
-    ConfirmPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
@@ -27,10 +25,10 @@ const ChangePasswordComponent = () => {
     });
 
     // Check if passwords match
-    setIsPasswordMatch(inputs.NewPassword === value);
+    setIsPasswordMatch(inputs.newPassword === value);
   };
 
-  const UpdatePassword = (event) => {
+  const updatePassword = (event) => {
     event.preventDefault();
 
     console.log(inputs);
@@ -38,23 +36,11 @@ const ChangePasswordComponent = () => {
   };
 
   return (
-    <Container>
+    <>
       <div className="logo">
         <img src={logo} alt="Your Logo" width="150vw" height="auto" />
       </div>
-      <Box
-        sx={{
-          maxWidth: "400px",
-          backgroundColor: "transparent",
-          border: "2px solid rgba(255, 255, 255, 0.5)",
-          borderRadius: "20px",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem 3rem",
-        }}
-      >
+      <Box className="Box-Layout">
         <section>
           <form>
             <Typography
@@ -73,11 +59,11 @@ const ChangePasswordComponent = () => {
               <InputLabel sx={{ color: "#fff" }}>New Password</InputLabel>
               <Input
                 type="password"
-                name="NewPassword"
+                name="newPassword"
                 required
                 autoComplete="off"
                 inputProps={{ maxLength: 35 }}
-                value={inputs.NewPassword}
+                value={inputs.newPassword}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
               />
@@ -86,15 +72,15 @@ const ChangePasswordComponent = () => {
               <InputLabel sx={{ color: "#fff" }}>Confirm Password</InputLabel>
               <Input
                 type="password"
-                name="ConfirmPassword"
+                name="confirmPassword"
                 required
                 autoComplete="off"
                 inputProps={{ maxLength: 35 }}
-                value={inputs.ConfirmPassword}
+                value={inputs.confirmPassword}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
               />
-              {!isPasswordMatch && inputs.ConfirmPassword && (
+              {!isPasswordMatch && inputs.confirmPassword && (
                 <Typography sx={{ color: "red" }}>
                   Passwords do not match
                 </Typography>
@@ -102,7 +88,7 @@ const ChangePasswordComponent = () => {
             </FormControl>
 
             <Button
-              onClick={UpdatePassword}
+              onClick={updatePassword}
               variant="contained"
               sx={{
                 width: "100%",
@@ -121,8 +107,8 @@ const ChangePasswordComponent = () => {
           </form>
         </section>
       </Box>
-    </Container>
+    </>
   );
 };
 
-export default ChangePasswordComponent;
+export default ChangePassword;

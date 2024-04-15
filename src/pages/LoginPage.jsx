@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import logo from "./logo1.png";
+import logo from "../assets/logo1.png";
 import {
   Button,
   Input,
@@ -14,12 +14,12 @@ import {
   Box,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate, Navigate } from "react-router-dom"; // Import Navigate
+import { useNavigate } from "react-router-dom"; // Import Navigate
 
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const LoginComponent = () => {
+const Login = () => {
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
@@ -29,7 +29,6 @@ const LoginComponent = () => {
     isEmailValid: true,
   });
 
-  const [isFormValid, setIsFormValid] = useState(false);
   const [error, setError] = useState(null);
   const [showNewPassword, setShowPassword] = useState(false);
 
@@ -38,59 +37,45 @@ const LoginComponent = () => {
   };
 
   useEffect(() => {
-    const isBothFieldsFilled =
-      inputs.email.trim() !== "" && inputs.password.trim() !== "";
-    setIsFormValid(isBothFieldsFilled && inputs.isEmailValid);
-  }, [inputs.email, inputs.password, inputs.isEmailValid]);
+    const isBothFieldsFilled = inputs.email.trim() !== "" && inputs.password.trim() !== "";
+    const isEmailValid = validateEmail(inputs.email);
+    setInputs(prevInputs => ({ ...prevInputs, isEmailValid }));
+  }, [inputs.email, inputs.password]);
 
-  const isEmailValid = (email) => {
-    if (email.trim() === "") {
-      return true;
-    }
+  const validateEmail = (email) => {
+    if (email.trim() === "") return true;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    const isEmailField = name === "email";
-
-    setInputs({
-      ...inputs,
-      [name]: value,
-      isEmailValid: isEmailField ? isEmailValid(value) : inputs.isEmailValid,
-    });
+    setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
   };
 
   const handleRememberMeChange = (event) => {
     const { name, checked } = event.target;
-    setInputs({
-      ...inputs,
-      [name]: checked,
-    });
+    setInputs(prevInputs => ({ ...prevInputs, [name]: checked }));
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(
-        "https://qbitlog-trainee.onrender.com/api/login",
-        {
-          email: inputs.email,
-          password: inputs.password,
-        }
-      );
-      // ye baat dhyaan rkhni hai yha tha token
-      console.log(response.data);
-      Cookies.set("token");
+      const response = await axios.post("https://qbitlog-trainee.onrender.com/api/login", {
+        email: inputs.email,
+        password: inputs.password,
+      });
 
-      setInputs({
+      Cookies.set("token", response.data.token);
+
+      setInputs(prevInputs => ({
+        ...prevInputs,
         email: "",
         password: "",
-        confirmPassword: "",
+        rememberMe: true,
         isFormValid: false,
-      });
+      }));
 
       navigate("/all-logs");
     } catch (error) {
@@ -100,51 +85,24 @@ const LoginComponent = () => {
     }
   };
 
-  // Add this check to prevent accessing login page after successful login
   useEffect(() => {
-    // Assuming you have some way to check authentication status, like checking a token in localStorage
-    const isAuthenticated = localStorage.getItem("token"); // Example: checking if a token exists
-    if (isAuthenticated) {
-      navigate("/Home");
-    }
-  }, []);
-  const token = Cookies.get("token");
-  useEffect(() => {
+    const token = Cookies.get("token");
     if (token) {
       navigate("/Home");
     }
   }, []);
 
+  const isFormValid = inputs.email.trim() !== "" && inputs.password.trim() !== "" && inputs.isEmailValid;
+
   return (
-    <Container>
+    <>
       <div className="logo">
         <img src={logo} alt="Your Logo" width="150vw" height="auto" />
       </div>
-      <Box
-        sx={{
-          // position: "relative",
-          maxWidth: "400px",
-          backgroundColor: "transparent",
-          border: "2px solid rgba(255, 255, 255, 0.5)",
-          borderRadius: "20px",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem 3rem",
-        }}
-      >
+      <Box className="Box-Layout">
         <section>
           <form>
-            <Typography
-              variant="h4"
-              sx={{
-                color: "#fff",
-                textAlign: "center",
-                marginBottom: "30px",
-                fontWeight: "bold",
-              }}
-            >
+            <Typography variant="h4" sx={{ color: "#fff", textAlign: "center", marginBottom: "30px", fontWeight: "bold" }}>
               Login
             </Typography>
 
@@ -167,13 +125,11 @@ const LoginComponent = () => {
               )}
             </FormControl>
 
-            <FormControl
-              sx={{ width: "100%", color: "#fff", marginBottom: "30px" }}
-            >
+            <FormControl sx={{ width: "100%", color: "#fff", marginBottom: "30px" }}>
               <InputLabel sx={{ color: "#fff" }}>Password</InputLabel>
               <Input
                 name="password"
-                type={showNewPassword ? "text" : "password"} // Toggles between text and password type
+                type={showNewPassword ? "text" : "password"}
                 autoComplete="off"
                 value={inputs.password}
                 onChange={handleInputChange}
@@ -184,11 +140,9 @@ const LoginComponent = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => handleTogglePasswordVisibility()} // Removed unnecessary argument
+                        onClick={handleTogglePasswordVisibility}
                         edge="end"
-                        aria-label={
-                          showNewPassword ? "Hide password" : "Show password"
-                        }
+                        aria-label={showNewPassword ? "Hide password" : "Show password"}
                       >
                         {showNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -199,39 +153,22 @@ const LoginComponent = () => {
               />
             </FormControl>
 
-            <div
-              className="forget"
-              style={{
-                marginBottom: "55px",
-                fontSize: "0.85rem",
-                color: "#fff",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
+            <div style={{ marginBottom: "55px", fontSize: "0.85rem", color: "#fff", display: "flex", justifyContent: "space-between" }}>
               <label style={{ display: "flex", alignItems: "center" }}>
                 <Checkbox
                   color="secondary"
                   name="rememberMe"
                   checked={inputs.rememberMe}
                   onChange={handleRememberMeChange}
-                  sx={{
-                    "&.Mui-checked": {
-                      color: "#858BC5",
-                    },
-                  }}
+                  sx={{ "&.Mui-checked": { color: "#858BC5" } }}
                 />
                 Remember Me
               </label>
-              <Link
-                href="/forgot"
-                color="inherit"
-                alignSelf="center"
-                underline="hover"
-              >
+              <Link href="/forgot" color="inherit" alignSelf="center" underline="hover">
                 Forget Password
               </Link>
             </div>
+
             <Button
               onClick={handleLogin}
               variant="contained"
@@ -249,23 +186,9 @@ const LoginComponent = () => {
             >
               Log in
             </Button>
-            <div
-              style={{
-                fontSize: "0.9rem",
-                color: "#fff",
-                textAlign: "center",
-                margin: "25px 0 10px",
-              }}
-            >
-              <Typography
-                variant="p"
-                sx={{
-                  fontSize: "0.9rem",
-                  color: "#fff",
-                  textAlign: "center",
-                  margin: "25px 0 10px",
-                }}
-              >
+
+            <div style={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
+              <Typography variant="p" sx={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
                 Don't have an account?{" "}
                 <Link href="/register" color="inherit" underline="hover">
                   Sign Up
@@ -275,8 +198,8 @@ const LoginComponent = () => {
           </form>
         </section>
       </Box>
-    </Container>
+    </>
   );
 };
 
-export default LoginComponent;
+export default Login;

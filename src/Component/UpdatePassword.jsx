@@ -70,18 +70,9 @@ const UpdatePassword = () => {
   }, [inputs]);
 
   return (
-    <Container>
+    <>
       <Box 
-        sx={{
-          maxWidth: "500px",
-          backgroundColor: "transparent",
-          borderRadius: "20px",
-          backdropFilter: "blur(12px)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem 3rem",
-        }}
+       className="Inner-Box-Layout"
       >
         <section>
           <form onSubmit={handleSubmit}>
@@ -199,7 +190,7 @@ const UpdatePassword = () => {
           </form>
         </section>
       </Box>
-    </Container>
+    </>
   );
 };
 

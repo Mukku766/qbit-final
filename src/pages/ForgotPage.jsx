@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import logo from "./logo1.png";
+import logo from "../assets/logo1.png";
 import {
   Button,
   FormControl,
   InputLabel,
   Link,
-  Container,
   Typography,
   Box,
   Input,
@@ -15,17 +14,17 @@ import {
 import { useNavigate } from "react-router-dom";
 import OTPInput from "react-otp-input";
 
-const ForgotComponent = () => {
-  const Navigate = useNavigate();
+const Forgot = () => {
+  const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
     email: "",
     otp: "",
   });
 
-  const [isOTPFieldEnabled, setIsOTPFieldEnabled] = useState(false);
-  const [isEmailFieldLocked, setIsEmailFieldLocked] = useState(false);
-  const [isEmailValidState, setIsEmailValidState] = useState(true);
+  const [otpFieldEnabled, setOTPFieldEnabled] = useState(false);
+  const [emailFieldLocked, setEmailFieldLocked] = useState(false);
+  const [emailValid, setEmailValid] = useState(true);
   const [showTryAnotherEmail, setShowTryAnotherEmail] = useState(false);
 
   const handleInputChange = (event) => {
@@ -34,57 +33,42 @@ const ForgotComponent = () => {
       ...inputs,
       [name]: value,
     });
-    setIsEmailValidState(isEmailValid(value));
+    setEmailValid(isEmailValid(value));
   };
 
   const isEmailValid = (email) => {
     if (email.trim() === "") {
-      return true; // Return true if the email field is empty
+      return true;
     }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const handleGetOTP = () => {
-    if (!isEmailValidState) {
+    if (!emailValid) {
       setShowTryAnotherEmail(true);
     } else {
-      console.log(inputs);
-      setIsOTPFieldEnabled(true);
-      setIsEmailFieldLocked(true);
+      setOTPFieldEnabled(true);
+      setEmailFieldLocked(true);
     }
   };
 
   const handleTryAnotherEmail = () => {
     setShowTryAnotherEmail(false);
-    setIsEmailFieldLocked(false);
-    setInputs({ ...inputs, email: "" }); // Clear the email input field
+    setEmailFieldLocked(false);
+    setInputs({ ...inputs, email: "" });
   };
 
   const handleConfirmOTP = () => {
-    console.log(inputs);
-    Navigate("/changepassword");
+    navigate("/changepassword");
   };
 
   return (
-    <Container>
+    <>
       <div className="logo">
         <img src={logo} alt="Your Logo" width="150vw" height="auto" />
       </div>
-      <Box
-        sx={{
-          maxWidth: "370px",
-          backgroundColor: "transparent",
-          border: "2px solid rgba(255, 255, 255, 0.5)",
-          borderRadius: "20px",
-          backdropFilter: "blur(10px)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "2rem 3rem",
-        }}
-      >
+      <Box className="Box-Layout">
         <section>
           <form>
             <Typography
@@ -92,7 +76,7 @@ const ForgotComponent = () => {
               sx={{
                 color: "#fff",
                 textAlign: "center",
-                marginBottom: "30px",
+                marginBottom: "40px",
                 fontWeight: "bold",
               }}
             >
@@ -110,9 +94,9 @@ const ForgotComponent = () => {
                 value={inputs.email}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
-                disabled={isEmailFieldLocked}
+                disabled={emailFieldLocked}
               />
-              {!isEmailValidState && !showTryAnotherEmail && (
+              {!emailValid && !showTryAnotherEmail && (
                 <Typography sx={{ color: "red" }}>
                   Invalid email format
                 </Typography>
@@ -149,23 +133,20 @@ const ForgotComponent = () => {
                     width: "40px",
                     color: "black",
                     marginRight: "27px",
-                    backgroundColor: isOTPFieldEnabled ? "#858BC5" : " #A0A8D0",
-                    pointerEvents: isOTPFieldEnabled ? "auto" : "none",
+                    backgroundColor: otpFieldEnabled ? "#858BC5" : " #A0A8D0",
+                    pointerEvents: otpFieldEnabled ? "auto" : "none",
                   }}
                   focusStyle={{ borderColor: "#858BC5" }}
                   hasErrored={false}
                   renderInput={(props, index) => (
                     <input
                       {...props}
-                      disabled={!isOTPFieldEnabled}
+                      disabled={!otpFieldEnabled}
                       style={{
-                        backgroundColor: isOTPFieldEnabled
-                          ? "#858BC5"
-                          : " #A0A8D0",
+                        backgroundColor: otpFieldEnabled ? "#858BC5" : " #A0A8D0",
                         borderRadius: "10px",
                         border: "1px solid ",
                         padding: "10px",
-
                         width: "40px",
                         color: "black",
                         marginRight: "27px",
@@ -176,49 +157,25 @@ const ForgotComponent = () => {
               </Stack>
             </FormControl>
 
-            {isOTPFieldEnabled ? (
-              <Button
-                onClick={handleConfirmOTP}
-                variant="contained"
-                sx={{
-                  width: "100%",
-                  height: "40px",
-                  borderRadius: "40px",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  transition: "background-color 0.4s ease",
-                  backgroundColor:
-                    isEmailValid(inputs.email) && inputs.otp.length === 4
-                      ? "#858BC5"
-                      : "grey",
-                }}
-                color="primary"
-                disabled={
-                  !isEmailValid(inputs.email) || inputs.otp.length !== 4
-                } // Disable if email is invalid or OTP is not complete
-              >
-                Confirm OTP
-              </Button>
-            ) : (
-              <Button
-  onClick={handleGetOTP}
-  variant="contained"
-  sx={{
-    width: "100%",
-    height: "40px",
-    borderRadius: "40px",
-    fontSize: "1rem",
-    fontWeight: "600",
-    transition: "background-color 0.4s ease",
-    backgroundColor: isEmailValid(inputs.email) ? "#858BC5" : "grey",
-  }}
-  color="primary"
-  disabled={!inputs.email || !isEmailValidState} // Disable if email is empty or invalid
->
-  Get OTP
-</Button>
-
-            )}
+            <Button
+              onClick={otpFieldEnabled ? handleConfirmOTP : handleGetOTP}
+              variant="contained"
+              sx={{
+                width: "100%",
+                height: "40px",
+                borderRadius: "40px",
+                fontSize: "1rem",
+                fontWeight: "600",
+                transition: "background-color 0.4s ease",
+                backgroundColor: emailValid ? "#858BC5" : "grey",
+              }}
+              color="primary"
+              disabled={
+                !inputs.email || (!otpFieldEnabled && !emailValid)
+              }
+            >
+              {otpFieldEnabled ? "Confirm OTP" : "Get OTP"}
+            </Button>
 
             <div
               style={{
@@ -246,8 +203,8 @@ const ForgotComponent = () => {
           </form>
         </section>
       </Box>
-    </Container>
+    </>
   );
 };
 
-export default ForgotComponent;
+export default Forgot;
