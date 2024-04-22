@@ -140,7 +140,7 @@ const LogInputFields = ({
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>
-          ))}{" "}
+          ))}
         </TextField>
       </Grid>
       <Grid item xs={12}>

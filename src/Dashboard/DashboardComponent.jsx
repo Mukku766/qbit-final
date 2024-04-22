@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const drawerWidth = 250;
 
 const PageAllLogs = () => <AllLog />;
-const PageAddLogs = () => <AddLogsComponent />;
+const PageAddLogs = () => <AddLogsComponent /> ;
 const PageUpdatePassword = () => <UpdatePassword />;
 const PageProfile = () => <Profile />;
 

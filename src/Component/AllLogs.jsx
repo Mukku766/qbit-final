@@ -6,19 +6,20 @@ import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import {
-  MenuItem,
   Typography,
   TextField,
   Button,
   Box,
   Grid,
+  MenuItem,
 } from "@mui/material";
 import Cookies from "js-cookie";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function AllLogs({ logs }) {
+function AllLogs() {
   const navigate = useNavigate();
-
+  const [logs, setLogs] = useState([]);
   const [filter, setFilter] = useState({
     year: "",
     month: "",
@@ -26,6 +27,10 @@ function AllLogs({ logs }) {
     date: "",
   });
 
+  const [searchEnabled, setSearchEnabled] = useState(false);
+  const [clearEnabled, setClearEnabled] = useState(false);
+  const token = Cookies.get("token");
+console.log(token)
   const years = [new Date().getFullYear()];
 
   const months = [
@@ -52,10 +57,11 @@ function AllLogs({ logs }) {
   };
 
   const handleFilterChange = (event) => {
+    console.log("date is here", event.target.value)
     const { name, value } = event.target;
     const updatedFilter = { ...filter, [name]: value };
     setFilter(updatedFilter);
-    setSubmitEnabled(updatedFilter.year !== "" || updatedFilter.date !== "");
+    setSearchEnabled(updatedFilter.year !== "" || updatedFilter.date !== "");
     const isClearEnabled = Object.values(updatedFilter).some(
       (value) => value !== ""
     );
@@ -69,39 +75,49 @@ function AllLogs({ logs }) {
       week: "",
       date: "",
     });
-    setSubmitEnabled(false);
+    setSearchEnabled(false);
     setClearEnabled(false);
   };
 
-  const filteredLogs = logs
-    ? logs.filter((log) => {
-        if (filter.year && log.year !== filter.year) return false;
-        if (filter.month && log.month !== filter.month) return false;
-        if (filter.week && log.week !== filter.week) return false;
-        if (filter.date && log.date !== filter.date) return false;
-        return true;
-      })
-    : [];
+  const searchLogs = async () => {
+   
+    try {
+      // Convert filter object keys to match backend expectations
+      const modifiedFilter = {
+        logYear: filter.year,
+        logMonth: filter.month,
+        logWeek: filter.week,
+        logDate: filter.date,
+      };
+  
+      console.log("Requesting logs with filter:", modifiedFilter); // Log the modified filter object
+      const response = await axios.get(
+        "https://qbitlog-trainee.onrender.com/api/user/search-logs",
+        {
+          params: modifiedFilter,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const responseData = response.data;
+      console.log("Response data:", responseData);
+  
+      setLogs(responseData.logs); // Setting logs state with data received from the backend
+      setSearchEnabled(true);
 
-  const [submitEnabled, setSubmitEnabled] = useState(false);
-  const [clearEnabled, setClearEnabled] = useState(false);
+    } catch (error) {
+      console.error("Error searching logs:", error);
+    }
+  };
+  
 
   const weeks = getWeeksOfMonth(filter.year, months.indexOf(filter.month));
-  const token = Cookies.get("token");
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/");
-    }
-  }, []);
 
   return (
     <div>
-      <Box
-       className="Inner-Box-Layout"
-      >
+      <Box className="Inner-Box-Layout">
         <Grid container spacing={8}>
-          {/* Year */}
           <Grid item xs={12} sm={6} md={6}>
             <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Year
@@ -121,7 +137,6 @@ function AllLogs({ logs }) {
               ))}
             </TextField>
           </Grid>
-          {/* Month */}
           <Grid item xs={12} sm={6} md={6}>
             <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Month
@@ -141,7 +156,6 @@ function AllLogs({ logs }) {
               ))}
             </TextField>
           </Grid>
-          {/* Week */}
           <Grid item sm={6} xs={12} md={6}>
             <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Week
@@ -161,7 +175,6 @@ function AllLogs({ logs }) {
               ))}
             </TextField>
           </Grid>
-          {/* Date */}
           <Grid item sm={6} xs={12} md={6}>
             <Typography className="Input-Label" sx={{ my: 1 }}>
               Select Date
@@ -172,17 +185,21 @@ function AllLogs({ logs }) {
               type="date"
               variant="standard"
               value={filter.date}
-              onChange={handleFilterChange}
+              onChange={(e) =>
+                handleFilterChange({
+                  target: { name: "date", value: e.target.value },
+                })
+              }
               inputProps={{
                 max: new Date().toISOString().split("T")[0],
               }}
             />
           </Grid>
-          {/* Submit Button */}
           <Grid item xs={6} md={3}>
             <Button
               variant="contained"
               color="primary"
+              onClick={searchLogs}
               sx={{
                 borderRadius: "50px",
                 bgcolor: "#858BC5",
@@ -190,13 +207,12 @@ function AllLogs({ logs }) {
                 marginRight: "8px",
                 width: "100%",
               }}
-              disabled={!submitEnabled}
+              disabled={!searchEnabled}
             >
-              Submit
+              Search
             </Button>
           </Grid>
           <Grid item xs={6} md={3}>
-            {/* Clear Button */}
             <Button
               variant="contained"
               color="primary"
@@ -204,7 +220,6 @@ function AllLogs({ logs }) {
                 borderRadius: "50px",
                 bgcolor: "#858BC5",
                 color: "#ffffff",
-
                 width: "100%",
               }}
               onClick={clearFilters}
@@ -215,30 +230,66 @@ function AllLogs({ logs }) {
           </Grid>
         </Grid>
       </Box>
-      {/* Table */}
-      <Box
-       className="Inner-Box-Layout" mt={6}
-      >
+      <Box className="Inner-Box-Layout" mt={6} style={{ display: "grid" }}>
         <TableContainer>
-          <Table>
-            <TableHead></TableHead>
-            <TableBody>
-              {filteredLogs.length > 0 ? (
-                filteredLogs.map((log, index) => (
-                  <TableRow key={index}></TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell sx={{ color: "white" }} colSpan={7}>
-                    No logs found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
+          <Table style={{ whiteSpace: "nowrap" }}>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Log Date
+                </TableCell>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Hours
+                </TableCell>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Minutes
+                </TableCell>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Log Type
+                </TableCell>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Project
+                </TableCell>
+                <TableCell sx={{ color: "#858BC5", textAlign: "center" }}>
+                  Log Description
+                </TableCell>
+              </TableRow>
+            </TableHead>
+          <TableBody>
+  {logs && logs.length > 0 ? (
+    logs.map((log, index) => (
+      <TableRow key={index}>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.logDate}
+        </TableCell>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.hours}
+        </TableCell>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.minutes}
+        </TableCell>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.logType}
+        </TableCell>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.project}
+        </TableCell>
+        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+          {log.logDescription}
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell sx={{ color: "white" }} colSpan={6}>
+        {searchEnabled ? "No matching logs found" : "Loading..."}
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
           </Table>
         </TableContainer>
-
-
       </Box>
     </div>
   );

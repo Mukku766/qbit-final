@@ -15,8 +15,8 @@ import EditIcon from "@mui/icons-material/Edit";
 const LogTable = ({ logs, handleDeleteLog, handleEditLog }) => {
   return (
     <TableContainer >
-      <Table> 
-        <TableHead style={{ whiteSpace: "nowrap"}}>
+      <Table style={{ whiteSpace: "nowrap"}}> 
+        <TableHead >
           <TableRow>
             <TableCell sx={{ color: "#858BC5", textAlign: "center"  }}> Log Date</TableCell>
             <TableCell sx={{ color: "#858BC5", textAlign: "center"  }}>Hours</TableCell>
@@ -27,7 +27,7 @@ const LogTable = ({ logs, handleDeleteLog, handleEditLog }) => {
             <TableCell sx={{ color: "#858BC5" , textAlign: "center" }}>Action</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody style={{ whiteSpace: "nowrap"}}>
+        <TableBody >
           {logs.map((log, index) => (
             <TableRow key={index}>
               <TableCell sx={{ color: "#fff", textAlign: "center"  }}>{log.logDate}</TableCell>
@@ -41,7 +41,7 @@ const LogTable = ({ logs, handleDeleteLog, handleEditLog }) => {
               <TableCell sx={{textAlign: "center"}}>
                 <IconButton
                   sx={{ color: "white",}}
-                  onClick={() => handleDeleteLog(index)}
+                  onClick={() => handleDeleteLog(log._id)}
                   onMouseOver={(e) => (e.currentTarget.style.color = "red")}
                   onMouseOut={(e) => (e.currentTarget.style.color = "white")}
                 >
