@@ -10,18 +10,22 @@ import {
   Grid,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const UpdatePassword = () => {
   const [inputs, setInputs] = useState({
-    CurrentPassword: "",
-    NewPassword: "",
-    ConfirmPassword: "",
+    password: "",
+    newPassword: "",
+    confirmPassword: "",
   });
+
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const token = Cookies.get("token");
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -33,13 +37,13 @@ const UpdatePassword = () => {
 
   const handleTogglePasswordVisibility = (passwordType) => {
     switch (passwordType) {
-      case "CurrentPassword":
+      case "password":
         setShowCurrentPassword((prevShow) => !prevShow);
         break;
-      case "NewPassword":
+      case "newPassword":
         setShowNewPassword((prevShow) => !prevShow);
         break;
-      case "ConfirmPassword":
+      case "confirmPassword":
         setShowConfirmPassword((prevShow) => !prevShow);
         break;
       default:
@@ -47,43 +51,78 @@ const UpdatePassword = () => {
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Updating password...");
-    console.log(inputs);
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.patch(
+        "https://qbitlog-trainee.onrender.com/api/update-password",
+        {
+          password: inputs.password,
+          newPassword: inputs.newPassword,
+          confirmPassword: inputs.confirmPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Password updated successfully");
+        console.log("Password updated successfully");
+      }
+
+      setInputs({
+        password: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+     
+    } catch (error) {
+      
+
+      if (error.response && error.response.status === 401) {
+        alert("Failed to update password");
+        console.error("Failed to update password");
+      }
+
+      else if (error.response && error.response.status === 400) {
+        alert("Current password is incorrect");
+        console.error("current password is incorrect");
+      }
+
+      
+
+    }
   };
 
   useEffect(() => {
     setIsFormFilled(
-      inputs.CurrentPassword !== "" &&
-        inputs.NewPassword !== "" &&
-        inputs.ConfirmPassword !== ""
+      inputs.password !== "" &&
+        inputs.newPassword !== "" &&
+        inputs.confirmPassword !== ""
     );
-    setIsPasswordMatch(inputs.NewPassword === inputs.ConfirmPassword);
+    setIsPasswordMatch(inputs.newPassword === inputs.confirmPassword);
   }, [inputs]);
-
-
-
-
-
-
 
   return (
     <Box className="Inner-Box-Layout" maxWidth={700}>
-      
-      <form onSubmit={handleSubmit}>
+      <form>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <Typography color="#fff" sx={{ my: 1 }}>Current Password</Typography>
+            <Typography color="#fff" sx={{ my: 1 }}>
+              Current Password
+            </Typography>
             <FormControl fullWidth>
               <TextField
                 type={showCurrentPassword ? "text" : "password"}
-                name="CurrentPassword"
+                name="password"
                 required
                 variant="standard"
                 autoComplete="off"
                 inputProps={{ maxLength: 35 }}
-                value={inputs.CurrentPassword}
+                value={inputs.password}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
                 InputProps={{
@@ -91,14 +130,20 @@ const UpdatePassword = () => {
                     <InputAdornment position="end">
                       <IconButton
                         onClick={() =>
-                          handleTogglePasswordVisibility("CurrentPassword")
+                          handleTogglePasswordVisibility("password")
                         }
                         edge="end"
                         aria-label={
-                          showCurrentPassword ? "hide password" : "show password"
+                          showCurrentPassword
+                            ? "hide password"
+                            : "show password"
                         }
                       >
-                        {showCurrentPassword ? <Visibility /> : <VisibilityOff />}
+                        {showCurrentPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -107,23 +152,27 @@ const UpdatePassword = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Typography color="#fff" sx={{ my: 1 }}>New Password</Typography>
+            <Typography color="#fff" sx={{ my: 1 }}>
+              New Password
+            </Typography>
             <FormControl fullWidth>
               <TextField
                 type={showNewPassword ? "text" : "password"}
-                name="NewPassword"
+                name="newPassword"
                 required
                 variant="standard"
                 autoComplete="off"
                 inputProps={{ maxLength: 35 }}
-                value={inputs.NewPassword}
+                value={inputs.newPassword}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => handleTogglePasswordVisibility("NewPassword")}
+                        onClick={() =>
+                          handleTogglePasswordVisibility("newPassword")
+                        }
                         edge="end"
                         aria-label={
                           showNewPassword ? "hide password" : "show password"
@@ -138,16 +187,18 @@ const UpdatePassword = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Typography color="#fff" sx={{ my: 1 }}>Confirm Password</Typography>
+            <Typography color="#fff" sx={{ my: 1 }}>
+              Confirm Password
+            </Typography>
             <FormControl fullWidth>
               <TextField
                 type={showConfirmPassword ? "text" : "password"}
-                name="ConfirmPassword"
+                name="confirmPassword"
                 required
                 variant="standard"
                 autoComplete="off"
                 inputProps={{ maxLength: 35 }}
-                value={inputs.ConfirmPassword}
+                value={inputs.confirmPassword}
                 onChange={handleInputChange}
                 sx={{ color: "#fff" }}
                 InputProps={{
@@ -155,20 +206,26 @@ const UpdatePassword = () => {
                     <InputAdornment position="end">
                       <IconButton
                         onClick={() =>
-                          handleTogglePasswordVisibility("ConfirmPassword")
+                          handleTogglePasswordVisibility("confirmPassword")
                         }
                         edge="end"
                         aria-label={
-                          showConfirmPassword ? "hide password" : "show password"
+                          showConfirmPassword
+                            ? "hide password"
+                            : "show password"
                         }
                       >
-                        {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                        {showConfirmPassword ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
                 }}
               />
-              {!isPasswordMatch && inputs.ConfirmPassword && (
+              {!isPasswordMatch && inputs.confirmPassword && (
                 <Typography sx={{ color: "red" }}>
                   Passwords do not match
                 </Typography>
@@ -177,25 +234,24 @@ const UpdatePassword = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-          <Button
-          type="submit"
-          variant="contained"
-          sx={{
-            width: "100%",
-            height: "40px",
-            borderRadius: "30px",
-            
-            fontSize: "1rem",
-            fontWeight: "600",
-            backgroundColor: isPasswordMatch ? "#858BC5" : "grey",
-          }}
-          disabled={!isFormFilled || !isPasswordMatch}
-        >
-          Confirm
-        </Button>
-</Grid>
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{
+                width: "100%",
+                height: "40px",
+                borderRadius: "30px",
+
+                fontSize: "1rem",
+                fontWeight: "600",
+                backgroundColor: isPasswordMatch ? "#858BC5" : "grey",
+              }}
+              disabled={!isFormFilled || !isPasswordMatch}
+            >
+              Confirm
+            </Button>
+          </Grid>
         </Grid>
-        
       </form>
     </Box>
   );

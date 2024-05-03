@@ -4,10 +4,12 @@ import {
   Button,
   Input,
   FormControl,
+  Link,
   InputLabel,
   Typography,
   Box,
 } from "@mui/material";
+import axios from "axios";
 
 const ChangePassword = () => {
   const [inputs, setInputs] = useState({
@@ -28,11 +30,46 @@ const ChangePassword = () => {
     setIsPasswordMatch(inputs.newPassword === value);
   };
 
-  const updatePassword = (event) => {
-    event.preventDefault();
+  const updatePassword = async () => {
+    try {
 
-    console.log(inputs);
-    // Add logic to update password
+      const response = await axios.patch(
+        "https://qbitlog-trainee.onrender.com/api/change-password",
+        {
+          newPassword: inputs.newPassword,
+          confirmPassword: inputs.confirmPassword,
+        }
+      );
+      setInputs({
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // console.log(response);
+
+      if (response.status === 200) {
+        alert("Password updated successfully");
+        console.log("Password updated successfully");
+      } 
+      
+    
+    
+    } catch (error) {
+      setInputs({
+        newPassword: "",
+        confirmPassword: "",
+      });
+      if (error.response && error.response.status === 500) {
+        alert("Timeout, Try again");
+        console.log("Timeout, Try again");
+      } 
+      else {
+        alert("Failed to update password");
+        console.error("Failed to update password");
+      }
+      console.error("Errorrrrr:", error.message);
+    }
+    
   };
 
   return (
@@ -97,13 +134,21 @@ const ChangePassword = () => {
                 fontSize: "1rem",
                 fontWeight: "600",
                 transition: "background-color 0.4s ease",
-                backgroundColor: isPasswordMatch ? "#858BC5" : "grey",
+                backgroundColor: isPasswordMatch ? "#858BC5" : "#bdbdbd",
               }}
               color="primary"
               disabled={!isPasswordMatch}
             >
               Confirm
             </Button>
+            <div style={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
+              <Typography variant="p" sx={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
+              Remember the password?{" "}
+                <Link href="/" color="inherit" underline="hover">
+                  Login
+                </Link>
+              </Typography>
+            </div>
           </form>
         </section>
       </Box>

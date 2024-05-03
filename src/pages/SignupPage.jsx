@@ -46,24 +46,29 @@ const Signup = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("https://qbitlog-trainee.onrender.com/api/signup", {
-        email: inputs.email,
-        password: inputs.password,
-      });
-      alert("Sign Up Successful. Now You can Login");
-      console.log(response.data);
-      setInputs({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        isFormValid: false,
-      });
+        const response = await axios.post("https://qbitlog-trainee.onrender.com/api/signup", {
+            email: inputs.email,
+            password: inputs.password,
+        });
+        alert("Sign Up Successful. Now You can Login");
+        console.log(response.data);
+        setInputs({
+            email: "",
+            password: "",
+            confirmPassword: "",
+            isFormValid: false,
+        });
     } catch (error) {
-      setError("An error occurred during signup. Please try again.");
-      alert("This Email already Exists");
-      console.error(error?.message || error?.response.data || 'This Email already Exists');
+        if (error.response && error.response.status === 500) {
+            // HTTP 409 indicates that the user already exists
+            alert("This Email already Exists");
+        } else {
+            setError("An error occurred during signup. Please try again.");
+            console.error(error?.message || error?.response.data || 'An error occurred during signup');
+        }
     }
-  };
+};
+
 
   return (
     <>
@@ -97,7 +102,7 @@ const Signup = () => {
             </FormControl>
 
             <FormControl sx={{ width: "100%", marginBottom: "30px" }}>
-              <InputLabel sx={{ color: "#fff" }}>Password</InputLabel>
+              <InputLabel sx={{ color: "#fff" }}> Password</InputLabel>
               <Input
                 name="password"
                 type="password"

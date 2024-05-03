@@ -14,9 +14,9 @@ function AddLogsComponent() {
   const [logDescription, setLogDescription] = useState("");
   const [logs, setLogs] = useState([]);
   const [selectedLogIndex, setSelectedLogIndex] = useState(null);
-  const [isUpdate, setIsUpdated] = useState(false);
-const[reload,setReload] = useState(false)
-const token = Cookies.get("token");
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [reload, setReload] = useState(false);
+  const token = Cookies.get("token");
 
   const handleLogDateChange = (event) => {
     setLogDate(event.target.value);
@@ -42,15 +42,12 @@ const token = Cookies.get("token");
     setLogDescription(event.target.value);
   };
 
-
-  function refresh(){
-    setReload(!reload)
+  function refresh() {
+    setReload(!reload);
   }
 
   const fetchLogs = async () => {
     try {
-     
-
       const response = await axios.get(
         "https://qbitlog-trainee.onrender.com/api/user/fetch-log",
         {
@@ -74,19 +71,49 @@ const token = Cookies.get("token");
     }
   };
 
-  // useEffect(() => {
-  //   fetchLogs();
-  // }, [logs]); // Add logs as dependency to useEffect
-
   useEffect(() => {
     fetchLogs();
-  }, [reload]);
+  }, [refresh]);
 
-  const handleAddLog = () => {
-    // const formattedLogDate = `${logDate.split("-")[2]}-${
-    //   logDate.split("-")[1]
-    // }-${logDate.split("-")[0]}`;
+  const addLogToServer = async (newLog, token) => {
+    try {
+      if (newLog?._id) {
+        let response = await axios.patch(
+          `https://qbitlog-trainee.onrender.com/api/user/update-log/${newLog._id}`,
+          newLog,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setIsUpdate(false);
+        console.log(
+          `Log ${newLog?._id ? `Updated` : `Added`} successfully:`,
+          response.data
+        );
+      } else {
+        let response = await axios.post(
+          "https://qbitlog-trainee.onrender.com/api/user/add-log",
+          newLog,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setIsUpdate(false);
+        console.log(
+          `Log ${newLog?._id ? `Updated` : `Added`} successfully:`,
+          response.data
+        );
+      }
+    } catch (error) {
+      console.error("Error adding log:", error);
+    }
+  };
 
+  const handleAddOrUpdateLog = async () => {
     let newLog;
 
     if (isUpdate) {
@@ -110,72 +137,37 @@ const token = Cookies.get("token");
       };
     }
 
-    if (selectedLogIndex !== null) {
-      const updatedLogs = [...logs];
-      updatedLogs[selectedLogIndex] = newLog;
-      setLogs(updatedLogs);
-      setSelectedLogIndex(null);
-    } else {
-      setLogs([...logs, newLog]);
-    }
-
-    clearInputFields();
-    console.log("After clear input");
-    
-    // Call API to add or update log
-    addLogToServer(newLog, token);
-  };
-
-  const addLogToServer = async (newLog, token) => {
-    try {
-      console.log("newLog", newLog);
-      console.log("token", token);
-      // Make POST request to your API endpoint with authentication headers
-      if (newLog?._id) {
-        let response = await axios.patch(
-          `https://qbitlog-trainee.onrender.com/api/user/update-log/${newLog._id}`,
-          newLog,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setIsUpdated(!isUpdate);
-        console.log(
-          `Log ${newLog?._id ? `Updated` : `Added`} successfully:`,
-          response.data
-        );
+    if (
+      logDate &&
+      logType &&
+      project &&
+      hours &&
+      minutes &&
+      logDescription
+    ) {
+      if (selectedLogIndex !== null) {
+        const updatedLogs = [...logs];
+        updatedLogs[selectedLogIndex] = newLog;
+        setLogs(updatedLogs);
+        setSelectedLogIndex(null);
       } else {
-        let response = await axios.post(
-          "https://qbitlog-trainee.onrender.com/api/user/add-log",
-          newLog,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setIsUpdated(!isUpdate);
-        console.log(
-          `Log ${newLog?._id ? `Updated` : `Added`} successfully:`,
-          response.data
-        );
+        setLogs([...logs, newLog]);
       }
-    } catch (error) {
-      console.error("Error adding log:", error);
+
+      clearInputFields();
+
+      addLogToServer(newLog, token);
+    } else {
+      alert("Please fill in all fields.");
     }
   };
 
   const handleDeleteLog = async (id) => {
+    refresh();
     try {
-      // Assuming you have the authentication token stored in a variable called authToken
-      const authToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjBkMzUwMzI5YjQxODRhMTliYjM1MzMiLCJpYXQiOjE3MTM3NjE1MzAsImV4cCI6MTcxMzg0NzkzMH0.phz7zoWW85ChJlE7v2pNZDiVQXqqpNyka4ZRUFzK0ZU";
-      // Configure Axios to send the authentication token in the request headers
       const config = {
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${token}`,
         },
       };
       console.log("This log is deleting");
@@ -186,17 +178,17 @@ const token = Cookies.get("token");
         config
       );
       console.log(id);
-      reload();
-      // If the request is successful, update the logs state by filtering out the deleted log
+      
       setLogs(logs.filter((log) => log.id !== id));
     } catch (error) {
       console.error("Error deleting log:", error);
     }
+   
   };
 
   const handleEditLog = (index) => {
     const selectedLog = logs[index];
-    reload();
+    refresh();
     console.log("Here is the selected log:", selectedLog);
     setLogDate(selectedLog?.logDate);
     setLogType(selectedLog?.logType);
@@ -205,7 +197,7 @@ const token = Cookies.get("token");
     setMinutes(selectedLog?.minutes);
     setLogDescription(selectedLog?.logDescription);
     setSelectedLogIndex(selectedLog?._id);
-    setIsUpdated(true);
+    setIsUpdate(true);
   };
 
   const clearInputFields = () => {
@@ -226,8 +218,6 @@ const token = Cookies.get("token");
   };
 
   const handleSubmitLogs = async () => {
-    const authToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjBkMzUwMzI5YjQxODRhMTliYjM1MzMiLCJpYXQiOjE3MTM3NjE1MzAsImV4cCI6MTcxMzg0NzkzMH0.phz7zoWW85ChJlE7v2pNZDiVQXqqpNyka4ZRUFzK0ZU";
     try {
       const response = await axios.post(
         "https://qbitlog-trainee.onrender.com/api/user/submit-log",
@@ -239,20 +229,16 @@ const token = Cookies.get("token");
           minutes,
           logDescription,
         },
-
         {
           headers: {
-            Authorization: `Bearer ${authToken}`, // Include authentication token
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       console.log("Log added successfully:", response.data);
-      // Optionally, you can fetch logs again to update the UI with the latest data
-refresh();
-
+      refresh();
     } catch (error) {
       console.error("Error adding log:", error);
-      // Handle error and provide feedback to the user
     }
   };
 
@@ -286,11 +272,11 @@ refresh();
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddLog}
+          onClick={handleAddOrUpdateLog}
           disabled={isButtonDisabled}
           sx={{ mt: 2, borderRadius: "50px", bgcolor: "#858BC5" }}
         >
-          {isUpdate == false ? "Add Log" : "Update Log"}
+          {isUpdate ? "Update Log" : "Add Log"}
         </Button>
       </Box>
       <Box className="Inner-Box-Layout" mt={6}>

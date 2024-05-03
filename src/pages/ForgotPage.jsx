@@ -13,13 +13,14 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import OTPInput from "react-otp-input";
+import axios from 'axios';
 
 const Forgot = () => {
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
     email: "",
-    otp: "",
+    otp: undefined ,
   });
 
   const [otpFieldEnabled, setOTPFieldEnabled] = useState(false);
@@ -44,14 +45,30 @@ const Forgot = () => {
     return emailRegex.test(email);
   };
 
-  const handleGetOTP = () => {
-    if (!emailValid) {
-      setShowTryAnotherEmail(true);
-    } else {
-      setOTPFieldEnabled(true);
-      setEmailFieldLocked(true);
+
+  const handleGetOTP = async () => {
+    try {
+        const response = await axios.post('https://qbitlog-trainee.onrender.com/api/get-otp', {
+            email: inputs.email,
+        });
+
+        if (response.status === 200) {
+            setOTPFieldEnabled(true);
+            setEmailFieldLocked(true);
+            console.log("OTP request successful");
+            alert("OTP sent to email successfully");
+        } 
+    } catch (error) {
+      if (error.response.status === 404) {
+        console.error('Email not found on the server');
+        alert('Email not found on the server');
+      } else {
+        console.error('Error:', error.message);
+        alert('An error occurred: ' + error.message);
+      }
     }
   };
+
 
   const handleTryAnotherEmail = () => {
     setShowTryAnotherEmail(false);
@@ -59,9 +76,30 @@ const Forgot = () => {
     setInputs({ ...inputs, email: "" });
   };
 
-  const handleConfirmOTP = () => {
-    navigate("/changepassword");
-  };
+  const handleConfirmOTP = async () => {
+    try {
+        console.log("Sending OTP to backend:", inputs.otp);
+        const response = await axios.post('https://qbitlog-trainee.onrender.com/api/confirm-otp', {
+            otp: inputs.otp,
+        });
+    
+        console.log("Response from backend:", response);
+    
+        if (response.status === 200) {
+            navigate("/changepassword");
+        } 
+    } catch (error) {
+
+      if (error.response && error.response.status === 401) {
+        alert("Entered OTP does not match or Maybe Expired");
+            console.error("Entered OTP does not match or Maybe Expired");
+      
+        } else {
+            console.error("An unexpected error occurred");
+        }
+    }
+};
+
 
   return (
     <>

@@ -37,9 +37,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const isBothFieldsFilled = inputs.email.trim() !== "" && inputs.password.trim() !== "";
+    const isBothFieldsFilled =
+      inputs.email.trim() !== "" && inputs.password.trim() !== "";
     const isEmailValid = validateEmail(inputs.email);
-    setInputs(prevInputs => ({ ...prevInputs, isEmailValid }));
+    setInputs((prevInputs) => ({ ...prevInputs, isEmailValid }));
   }, [inputs.email, inputs.password]);
 
   const validateEmail = (email) => {
@@ -50,26 +51,29 @@ const Login = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
   };
 
   const handleRememberMeChange = (event) => {
     const { name, checked } = event.target;
-    setInputs(prevInputs => ({ ...prevInputs, [name]: checked }));
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: checked }));
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post("https://qbitlog-trainee.onrender.com/api/login", {
-        email: inputs.email,
-        password: inputs.password,
-      });
+      const response = await axios.post(
+        "https://qbitlog-trainee.onrender.com/api/login",
+        {
+          email: inputs.email,
+          password: inputs.password,
+        }
+      );
 
       Cookies.set("token", response.data.token);
 
-      setInputs(prevInputs => ({
+      setInputs((prevInputs) => ({
         ...prevInputs,
         email: "",
         password: "",
@@ -79,9 +83,13 @@ const Login = () => {
 
       navigate("/all-logs");
     } catch (error) {
-      setError("An error occurred during login. Please try again.");
-      alert("Email and Password not Matched");
-      console.error(error);
+      if (error.response && error.response.status === 500) {
+        // HTTP 401 indicates that email and password don't match
+        alert("Email and Password not Matched");
+      } else {
+        setError("An error occurred during login. Please try again.");
+        console.error(error);
+      }
     }
   };
 
@@ -92,7 +100,10 @@ const Login = () => {
     }
   }, []);
 
-  const isFormValid = inputs.email.trim() !== "" && inputs.password.trim() !== "" && inputs.isEmailValid;
+  const isFormValid =
+    inputs.email.trim() !== "" &&
+    inputs.password.trim() !== "" &&
+    inputs.isEmailValid;
 
   return (
     <>
@@ -102,7 +113,15 @@ const Login = () => {
       <Box className="Box-Layout">
         <section>
           <form>
-            <Typography variant="h4" sx={{ color: "#fff", textAlign: "center", marginBottom: "30px", fontWeight: "bold" }}>
+            <Typography
+              variant="h4"
+              sx={{
+                color: "#fff",
+                textAlign: "center",
+                marginBottom: "30px",
+                fontWeight: "bold",
+              }}
+            >
               Login
             </Typography>
 
@@ -125,7 +144,9 @@ const Login = () => {
               )}
             </FormControl>
 
-            <FormControl sx={{ width: "100%", color: "#fff", marginBottom: "30px" }}>
+            <FormControl
+              sx={{ width: "100%", color: "#fff", marginBottom: "30px" }}
+            >
               <InputLabel sx={{ color: "#fff" }}>Password</InputLabel>
               <Input
                 name="password"
@@ -142,7 +163,11 @@ const Login = () => {
                       <IconButton
                         onClick={handleTogglePasswordVisibility}
                         edge="end"
-                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showNewPassword
+                            ? "Hide newPassword"
+                            : "Show newPassword"
+                        }
                       >
                         {showNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
@@ -153,22 +178,7 @@ const Login = () => {
               />
             </FormControl>
 
-            <div style={{ marginBottom: "55px", fontSize: "0.85rem", color: "#fff", display: "flex", justifyContent: "space-between" }}>
-              <label style={{ display: "flex", alignItems: "center" }}>
-                <Checkbox
-                  color="secondary"
-                  name="rememberMe"
-                  checked={inputs.rememberMe}
-                  onChange={handleRememberMeChange}
-                  sx={{ "&.Mui-checked": { color: "#858BC5" } }}
-                />
-                Remember Me
-              </label>
-              <Link href="/forgot" color="inherit" alignSelf="center" underline="hover">
-                Forget Password
-              </Link>
-            </div>
-
+          
             <Button
               onClick={handleLogin}
               variant="contained"
@@ -187,13 +197,40 @@ const Login = () => {
               Log in
             </Button>
 
-            <div style={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
-              <Typography variant="p" sx={{ fontSize: "0.9rem", color: "#fff", textAlign: "center", margin: "25px 0 10px" }}>
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#fff",
+                textAlign: "center",
+                marginTop: "25px",
+              }}
+            >
+              <Typography
+                variant="p"
+                sx={{
+                  fontSize: "0.9rem",
+                  color: "#fff",
+                  textAlign: "center",
+                  mt: 3
+                }}
+              >
                 Don't have an account?{" "}
                 <Link href="/register" color="inherit" underline="hover">
                   Sign Up
                 </Link>
               </Typography>
+            </div>
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#fff",
+                textAlign: "center",
+                marginTop: "25px",
+              }}
+            >
+              <Link href="/forgot" color="inherit" underline="hover">
+                Forgot Password 
+              </Link>
             </div>
           </form>
         </section>

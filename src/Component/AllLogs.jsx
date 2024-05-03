@@ -30,7 +30,7 @@ function AllLogs() {
   const [searchEnabled, setSearchEnabled] = useState(false);
   const [clearEnabled, setClearEnabled] = useState(false);
   const token = Cookies.get("token");
-console.log(token)
+
   const years = [new Date().getFullYear()];
 
   const months = [
@@ -57,7 +57,7 @@ console.log(token)
   };
 
   const handleFilterChange = (event) => {
-    console.log("date is here", event.target.value)
+    console.log("date is here", event.target.value);
     const { name, value } = event.target;
     const updatedFilter = { ...filter, [name]: value };
     setFilter(updatedFilter);
@@ -80,7 +80,6 @@ console.log(token)
   };
 
   const searchLogs = async () => {
-   
     try {
       // Convert filter object keys to match backend expectations
       const modifiedFilter = {
@@ -89,7 +88,7 @@ console.log(token)
         logWeek: filter.week,
         logDate: filter.date,
       };
-  
+
       console.log("Requesting logs with filter:", modifiedFilter); // Log the modified filter object
       const response = await axios.get(
         "https://qbitlog-trainee.onrender.com/api/user/search-logs",
@@ -102,15 +101,14 @@ console.log(token)
       );
       const responseData = response.data;
       console.log("Response data:", responseData);
-  
+
       setLogs(responseData.logs); // Setting logs state with data received from the backend
       setSearchEnabled(true);
-
+      clearFilters(); // Clearing filters after successful search
     } catch (error) {
       console.error("Error searching logs:", error);
     }
   };
-  
 
   const weeks = getWeeksOfMonth(filter.year, months.indexOf(filter.month));
 
@@ -176,24 +174,27 @@ console.log(token)
             </TextField>
           </Grid>
           <Grid item sm={6} xs={12} md={6}>
-            <Typography className="Input-Label" sx={{ my: 1 }}>
-              Select Date
-            </Typography>
-            <TextField
-              name="date"
-              fullWidth
-              type="date"
-              variant="standard"
-              value={filter.date}
-              onChange={(e) =>
-                handleFilterChange({
-                  target: { name: "date", value: e.target.value },
-                })
-              }
-              inputProps={{
-                max: new Date().toISOString().split("T")[0],
-              }}
-            />
+            <div style={{ position: "relative" }}>
+              <Typography className="Input-Label" sx={{ my: 1 }}>
+                Select Date
+              </Typography>
+              <TextField
+              sx={{ alignContent: "center", alignItems: "center", justifyContent: "center", selfalign: "center"}}
+                name="date"
+                fullWidth
+                type="date"
+                variant="standard"
+                value={filter.date}
+                onChange={(e) =>
+                  handleFilterChange({
+                    target: { name: "date", value: e.target.value },
+                  })
+                }
+                inputProps={{
+                  max: new Date().toISOString().split("T")[0],
+                }}
+              />
+            </div>
           </Grid>
           <Grid item xs={6} md={3}>
             <Button
@@ -255,39 +256,40 @@ console.log(token)
                 </TableCell>
               </TableRow>
             </TableHead>
-          <TableBody>
-  {logs && logs.length > 0 ? (
-    logs.map((log, index) => (
-      <TableRow key={index}>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.logDate}
-        </TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.hours}
-        </TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.minutes}
-        </TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.logType}
-        </TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.project}
-        </TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>
-          {log.logDescription}
-        </TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell sx={{ color: "white" }} colSpan={6}>
-        {searchEnabled ? "No matching logs found" : "Loading..."}
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+            <TableBody>
+              {logs && logs.length > 0 ? (
+                logs.map((log, index) => (
+                  <TableRow key={index}>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.logDate}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.hours}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.minutes}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.logType}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.project}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff", textAlign: "center" }}>
+                      {log.logDescription}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell sx={{ color: "white" }} colSpan={6}>
+                    {searchEnabled
+                      ? "No matching logs found"
+                      : "Waiting For Your Search..."}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
       </Box>
